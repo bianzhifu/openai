@@ -6,13 +6,26 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 )
 
 var (
 	API_KEY              = ""
 	Model_gpt35turbo     = "gpt-3.5-turbo"
 	Model_gpt35turbo0301 = "gpt-3.5-turbo-0301"
+	CuzClient            *http.Client
 )
+
+func InitCuzClient(proxy string) {
+	proxyUrl, _ := url.Parse("socks5://" + proxy)
+	if len(proxy) > 0 {
+		transport := &http.Transport{
+			Proxy: http.ProxyURL(proxyUrl),
+		}
+		CuzClient = &http.Client{Transport: transport}
+	}
+	CuzClient = &http.Client{}
+}
 
 func InitApi(apikey string) {
 	API_KEY = apikey
@@ -48,7 +61,6 @@ type ChatRespone struct {
 }
 
 func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
-	client := &http.Client{}
 	reqdata, err := json.Marshal(chatReq)
 	if err != nil {
 		return err, nil
@@ -59,7 +71,7 @@ func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+API_KEY)
-	resp, err := client.Do(req)
+	resp, err := CuzClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}

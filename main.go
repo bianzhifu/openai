@@ -70,7 +70,7 @@ func runWebService(port int) {
 }
 
 func runTgBot(tgbot, tgids string) {
-	bot, err := tgbotapi.NewBotAPI(tgbot)
+	bot, err := tgbotapi.NewBotAPIWithClient(tgbot, tgbotapi.APIEndpoint, client.CuzClient)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -103,6 +103,7 @@ func runTgBot(tgbot, tgids string) {
 func main() {
 
 	apikey := flag.String("APIKEY", "", "APIKEY,必须指定")
+	socks5 := flag.String("socks5", "", "示例：127.0.0.1:1080")
 	tgbot := flag.String("tgbot", "", "tgbot api 没有则不开启")
 	tgids := flag.String("tgids", "", "只允许指定的tgid访问,多个id用,分割")
 	port := flag.Int("port", 0, "web端口，0则不开启")
@@ -115,6 +116,7 @@ func main() {
 		client.InitApi(*apikey)
 	}
 
+	client.InitCuzClient(*socks5)
 	if len(*tgbot) > 0 {
 		go runTgBot(*tgbot, *tgids)
 	}
