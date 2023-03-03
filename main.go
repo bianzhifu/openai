@@ -43,11 +43,20 @@ func QA(q string) string {
 //go:embed templates/*
 var f embed.FS
 
-func runWebService(port int) {
+func runWebService(port int, password string) {
 	gin.SetMode(gin.ReleaseMode)
 	routes := gin.Default()
 	routes.Static("/movie", "./movie/")
 
+	var authorized *gin.RouterGroup
+	if len(password) > 0 {
+		ginauth := gin.BasicAuth(
+			gin.Accounts{"admin": password},
+		)
+		authorized = routes.Group("/", ginauth)
+	} else {
+		authorized = routes.Group("/")
+	}
 	tmpl := template.New("")
 	tmpl = template.Must(tmpl.ParseFS(f, "templates/*.html"))
 	routes.SetHTMLTemplate(tmpl)
@@ -55,12 +64,12 @@ func runWebService(port int) {
 	fstatic, _ := fs.Sub(f, "static")
 	routes.StaticFS("/static", http.FS(fstatic))
 
-	routes.GET("/", func(c *gin.Context) {
+	authorized.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{})
 		return
 	})
 
-	routes.GET("/chat/get", func(c *gin.Context) {
+	authorized.GET("/chat/get", func(c *gin.Context) {
 		message := c.Query("msg")
 		a := QA(message)
 		c.String(http.StatusOK, a)
@@ -104,6 +113,7 @@ func main() {
 
 	apikey := flag.String("APIKEY", "", "APIKEY,必须指定")
 	model := flag.String("model", "gpt-3.5-turbo", "指定模型")
+	password := flag.String("password", "", "设置密码开启web验证，用户名为admin")
 	socks5 := flag.String("socks5", "", "示例：127.0.0.1:1080")
 	tgbot := flag.String("tgbot", "", "tgbot api 没有则不开启")
 	tgids := flag.String("tgids", "", "只允许指定的tgid访问,多个id用,分割")
@@ -122,7 +132,7 @@ func main() {
 		go runTgBot(*tgbot, *tgids)
 	}
 	if *port > 0 {
-		go runWebService(*port)
+		go runWebService(*port, *password)
 	}
 	select {}
 }
