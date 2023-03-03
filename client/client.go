@@ -64,7 +64,13 @@ type ChatRespone struct {
 }
 
 func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("run Chat time panic: %v", err)
+		}
+	}()
 	reqdata, err := json.Marshal(chatReq)
+	fmt.Println(string(reqdata))
 	if err != nil {
 		return err, nil
 	}
@@ -76,7 +82,7 @@ func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
 	req.Header.Set("Authorization", "Bearer "+API_KEY)
 	resp, err := CuzClient.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		return err, nil
 	}
 	defer resp.Body.Close()
 	bodyText, err := io.ReadAll(resp.Body)
@@ -84,10 +90,11 @@ func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
 		return err, nil
 	}
 	var chatResp ChatRespone
+	fmt.Println(string(bodyText))
 	err = json.Unmarshal(bodyText, &chatResp)
 	if err != nil {
 		fmt.Println(string(bodyText))
-		log.Fatal(err)
+		return err, nil
 	}
 	return nil, &chatResp
 }

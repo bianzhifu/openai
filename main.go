@@ -25,13 +25,14 @@ var (
 )
 
 func QA(q string, user string) string {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("run QA time panic: %v", err)
+		}
+	}()
 	msgs := history[user]
 	if msgs == nil {
 		msgs = []client.ChatRequestMessage{}
-	}
-	if err := recover(); err != nil {
-		fmt.Println(err)
-		return "机器人故障"
 	}
 	msgs = append(msgs, client.ChatRequestMessage{
 		Role:    "user",
@@ -59,6 +60,7 @@ func QA(q string, user string) string {
 	})
 	history[user] = msgs
 	if true {
+		fmt.Println(a)
 		printmessage := "输出TOKEN消耗【"
 		printmessage += "请求的token数量:" + strconv.Itoa(resp.Usage.PromptTokens)
 		printmessage += "，回答的token数量:" + strconv.Itoa(resp.Usage.CompletionTokens)
@@ -73,6 +75,11 @@ func QA(q string, user string) string {
 var f embed.FS
 
 func runWebService(port int, password string) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("run runWebService time panic: %v", err)
+		}
+	}()
 	gin.SetMode(gin.ReleaseMode)
 	routes := gin.Default()
 	store := cookie.NewStore([]byte("ckpassworld1234"))
@@ -120,6 +127,7 @@ func runWebService(port int, password string) {
 			ckuser = ckuserinf.(string)
 		}
 		message := c.Query("msg")
+		fmt.Println(message)
 		a := QA(message, ckuser)
 		c.String(http.StatusOK, a)
 		return
@@ -128,6 +136,11 @@ func runWebService(port int, password string) {
 }
 
 func runTgBot(tgbot, tgids string) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("run runTgBot time panic: %v", err)
+		}
+	}()
 	bot, err := tgbotapi.NewBotAPIWithClient(tgbot, tgbotapi.APIEndpoint, client.CuzClient)
 	if err != nil {
 		log.Panic(err)
@@ -188,6 +201,10 @@ func main() {
 	}
 	if *port > 0 {
 		go runWebService(*port, *password)
+	}
+	if len(*tgbot) == 0 && *port == 0 {
+		fmt.Println("必须启动web或者tgapi")
+		return
 	}
 	select {}
 }
