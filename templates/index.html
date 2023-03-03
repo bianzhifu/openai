@@ -79,7 +79,7 @@
             list-style: none;
             padding: 20px 10px 0 10px;
             margin: 0;
-            height: 347px;
+            height: calc(100% - 150px);
             overflow-x: hidden;
             overflow-y: auto;
         }
@@ -266,7 +266,7 @@
                 response.innerHTML = "🤔<br>" + message + "<br>🤖" + marked.parse(xhr.responseText);
                 chatlog.appendChild(response);
                 // Scroll the chatlog to the bottom
-                chatlog.scrollTop = chatlog.scrollHeight;
+                chatlog.scrollTop = document.getElementById("chatlog").scrollHeight;
                 loading.style.display = 'none';
             }
         }

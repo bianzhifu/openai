@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -37,8 +38,10 @@ type ChatRequestMessage struct {
 }
 
 type ChatRequest struct {
-	Model    string               `json:"model"`
-	Messages []ChatRequestMessage `json:"messages"`
+	Model       string               `json:"model"`
+	Messages    []ChatRequestMessage `json:"messages"`
+	Temperature float64              `json:"temperature"`
+	User        string               `json:"user"`
 }
 
 type ChatRespone struct {
@@ -83,6 +86,7 @@ func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
 	var chatResp ChatRespone
 	err = json.Unmarshal(bodyText, &chatResp)
 	if err != nil {
+		fmt.Println(string(bodyText))
 		log.Fatal(err)
 	}
 	return nil, &chatResp
