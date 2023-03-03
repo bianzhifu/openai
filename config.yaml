@@ -1,0 +1,3 @@
+APIKEY: 填写官方APIKEY token二选一 优先使用APIKEY
+token: 填写token https://chat.openai.com/api/auth/session中的accessToken
+port: 8888

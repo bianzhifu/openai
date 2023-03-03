@@ -17,19 +17,15 @@ var (
 )
 
 func InitCuzClient(proxy string) {
-	proxyUrl, _ := url.Parse("socks5://" + proxy)
 	if len(proxy) > 0 {
+		proxyUrl, _ := url.Parse("socks5://" + proxy)
 		transport := &http.Transport{
 			Proxy: http.ProxyURL(proxyUrl),
 		}
 		CuzClient = &http.Client{Transport: transport}
+	} else {
+		CuzClient = &http.Client{}
 	}
-	CuzClient = &http.Client{}
-}
-
-func InitApi(apikey string, model string) {
-	API_KEY = apikey
-	Model = model
 }
 
 type ChatRequestMessage struct {
