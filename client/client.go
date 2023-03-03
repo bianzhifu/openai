@@ -70,7 +70,6 @@ func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
 		}
 	}()
 	reqdata, err := json.Marshal(chatReq)
-	fmt.Println(string(reqdata))
 	if err != nil {
 		return err, nil
 	}
@@ -90,7 +89,6 @@ func Chat(chatReq *ChatRequest) (error, *ChatRespone) {
 		return err, nil
 	}
 	var chatResp ChatRespone
-	fmt.Println(string(bodyText))
 	err = json.Unmarshal(bodyText, &chatResp)
 	if err != nil {
 		fmt.Println(string(bodyText))

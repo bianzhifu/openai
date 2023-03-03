@@ -127,7 +127,6 @@ func runWebService(port int, password string) {
 			ckuser = ckuserinf.(string)
 		}
 		message := c.Query("msg")
-		fmt.Println(message)
 		a := QA(message, ckuser)
 		c.String(http.StatusOK, a)
 		return
@@ -185,6 +184,7 @@ func main() {
 
 	if *historyvar < 1 {
 		fmt.Println("history必须>=1")
+		return
 	}
 	MaxHistory = *historyvar
 
