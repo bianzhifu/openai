@@ -7,12 +7,20 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
+      - windows
+      - darwin
     goarch:
       - arm
+      - 386
       - arm64
       - amd64
-    gomips:
-      - softfloat
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: darwin
+        goarch: arm
+      - goos: darwin
+        goarch: 386
     main: ./
     binary: openai
 checksum:
