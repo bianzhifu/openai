@@ -21,7 +21,7 @@ func QA(q string) string {
 		return "机器人故障"
 	}
 	chatReq := client.ChatRequest{
-		Model: client.Model_gpt35turbo0301,
+		Model: client.Model,
 		Messages: []client.ChatRequestMessage{{Role: "user",
 			Content: q},
 		},
@@ -103,6 +103,7 @@ func runTgBot(tgbot, tgids string) {
 func main() {
 
 	apikey := flag.String("APIKEY", "", "APIKEY,必须指定")
+	model := flag.String("model", "gpt-3.5-turbo", "指定模型")
 	socks5 := flag.String("socks5", "", "示例：127.0.0.1:1080")
 	tgbot := flag.String("tgbot", "", "tgbot api 没有则不开启")
 	tgids := flag.String("tgids", "", "只允许指定的tgid访问,多个id用,分割")
@@ -113,7 +114,7 @@ func main() {
 		fmt.Println("必须指定APIKEY")
 		return
 	} else {
-		client.InitApi(*apikey)
+		client.InitApi(*apikey, *model)
 	}
 
 	client.InitCuzClient(*socks5)

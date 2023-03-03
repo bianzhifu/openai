@@ -10,10 +10,9 @@ import (
 )
 
 var (
-	API_KEY              = ""
-	Model_gpt35turbo     = "gpt-3.5-turbo"
-	Model_gpt35turbo0301 = "gpt-3.5-turbo-0301"
-	CuzClient            *http.Client
+	API_KEY   = ""
+	Model     = ""
+	CuzClient *http.Client
 )
 
 func InitCuzClient(proxy string) {
@@ -27,8 +26,9 @@ func InitCuzClient(proxy string) {
 	CuzClient = &http.Client{}
 }
 
-func InitApi(apikey string) {
+func InitApi(apikey string, model string) {
 	API_KEY = apikey
+	Model = model
 }
 
 type ChatRequestMessage struct {
