@@ -1,0 +1,29 @@
+before:
+  hooks:
+    - go mod tidy -v
+builds:
+  - id: openai
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - arm
+      - arm64
+      - amd64
+    gomips:
+      - softfloat
+    main: ./
+    binary: openai
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{.ProjectName}}"
+archives:
+  - name_template: "openai_{{ .Os }}_{{ .Arch }}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
